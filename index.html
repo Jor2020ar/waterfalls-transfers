@@ -1,0 +1,770 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waterfalls Airport Transfers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Sello de agua visible */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><circle cx="100" cy="100" r="90" fill="none" stroke="%2300D1FF" stroke-width="3" opacity="0.3"/><text x="100" y="110" text-anchor="middle" fill="%2300D1FF" font-size="24" font-weight="bold" opacity="0.5">WATERFALLS</text></svg>') no-repeat center;
+            background-size: contain;
+            opacity: 0.2;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Logotipo circular visible */
+        .logo-container {
+            margin-bottom: 30px;
+        }
+        
+        .logo-circular {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto;
+            background: linear-gradient(45deg, #00D1FF, #0099CC);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0, 209, 255, 0.5);
+        }
+        
+        .logo-text {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+
+        .main-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .language-selector {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 5px 15px;
+            margin-top: 10px;
+        }
+
+        .language-selector i {
+            margin-right: 10px;
+            color: #00D1FF;
+        }
+
+        .language-selector select {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .language-selector select option {
+            background: #2d2d2d;
+            border: none;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Form Cards */
+        .form-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .form-card:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(var(--card-color-rgb, 0, 209, 255), 0.3), transparent 30%);
+            animation: rotate 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .form-card:hover:before {
+            opacity: 1;
+        }
+        
+        .form-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(1turn); }
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--card-color, #00D1FF);
+            text-shadow: 0 0 10px var(--card-color, #00D1FF);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .card-desc {
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+
+        .card-share-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.5);
+            transition: color 0.3s, transform 0.3s;
+            z-index: 2;
+        }
+        .card-share-icon:hover {
+            color: var(--card-color, #00D1FF);
+            transform: scale(1.2);
+        }
+
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #2d2d2d;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--modal-color, #00D1FF);
+            --modal-color: #00D1FF;
+            --modal-color-dark: #0099CC;
+            --modal-color-rgb: 0, 209, 255;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: var(--modal-color);
+        }
+
+        .modal-close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-weight: 600;
+        }
+        
+        .form-section-heading {
+            margin-top: 25px;
+            margin-bottom: 15px;
+            color: var(--modal-color);
+            border-bottom: 1px solid var(--modal-color);
+            padding-bottom: 5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group input[type="time"],
+        .form-group input[type="number"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid #555;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--modal-color);
+            box-shadow: 0 0 10px rgba(var(--modal-color-rgb), 0.5);
+        }
+        
+        .required {
+            color: var(--modal-color);
+            margin-left: 5px;
+        }
+
+        .error-message {
+            display: none;
+            color: #ff4d4d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .invalid {
+            border-color: #ff4d4d !important;
+        }
+
+        .submit-btn {
+            background: var(--modal-color);
+            color: #1a1a1a;
+            border: none;
+            padding: 15px 25px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            background: var(--modal-color-dark);
+            box-shadow: 0 0 15px rgba(var(--modal-color-rgb), 0.7);
+        }
+        
+        .submit-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        
+        .excursions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .excursion-item {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--modal-color);
+        }
+        .excursion-item.custom {
+            border-left-color: #999;
+        }
+
+        .excursion-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .excursion-selector input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--modal-color);
+        }
+        .excursion-selector label {
+            margin: 0;
+            font-weight: normal;
+        }
+        
+        .excursion-details {
+            display: none;
+            margin-top: 10px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .excursion-details input {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .excursion-custom-textarea {
+             width: 100%;
+             margin-top: 10px;
+        }
+
+
+        /* Confirmation Modal Specifics */
+        #confirmationModal .modal-content {
+             --modal-color: #00e676;
+             --modal-color-dark: #00b04c;
+             --modal-color-rgb: 0, 230, 118;
+        }
+        #confirmationModalBody {
+            text-align: center;
+        }
+        #confirmationModalBody .fa-check-circle {
+            font-size: 4rem;
+            color: var(--modal-color);
+            margin-bottom: 20px;
+        }
+        #confirmationMessage {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        #confirmationTips {
+            text-align: left;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        #confirmationTips h3 {
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        #confirmationTips ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        #confirmationTips li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        #confirmationTips .fa-check-circle {
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+        #confirmationCloseBtn {
+            margin-top: 20px;
+            width: auto;
+            padding: 12px 30px;
+            background: var(--modal-color);
+            color: #1a1a1a;
+        }
+        #confirmationCloseBtn:hover {
+            background: var(--modal-color-dark);
+        }
+
+        .calendar-link {
+            margin-bottom: 10px;
+            text-decoration: none;
+            justify-content: start !important; /* Override .submit-btn's center alignment */
+            background: rgba(255,255,255,0.1) !important; /* Override button color */
+            color: #fff !important;
+            border: 1px solid var(--modal-color);
+            text-align: left;
+        }
+        .calendar-link:hover {
+            background: rgba(var(--modal-color-rgb), 0.3) !important;
+            box-shadow: none !important;
+        }
+        .calendar-link i {
+            margin-right: 10px;
+        }
+
+
+        /* Share Modal */
+        #shareModalBody {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        #shareLinkInput {
+            width: 100%;
+        }
+        #shareModalBody .share-actions {
+            display: flex;
+            gap: 10px;
+        }
+        #shareModalBody .share-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        #copyShareLinkBtn {
+            background-color: var(--modal-color);
+            color: #1a1a1a;
+        }
+        #copyShareLinkBtn:hover {
+            background-color: var(--modal-color-dark);
+        }
+        #nativeShareBtn {
+            background-color: transparent;
+            color: var(--modal-color);
+            border: 1px solid var(--modal-color);
+        }
+        #nativeShareBtn:hover {
+            background-color: var(--modal-color);
+            color: #1a1a1a;
+        }
+
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #888;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Notification */
+        #notification {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #00D1FF;
+            color: #1a1a1a;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 209, 255, 0.5);
+            transition: bottom 0.5s ease-in-out;
+            z-index: 2000;
+            font-weight: 600;
+        }
+        #notification.show {
+            bottom: 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            .logo-circular {
+                width: 120px;
+                height: 120px;
+            }
+            .logo-text {
+                font-size: 4rem;
+            }
+            .form-cards-container {
+                grid-template-columns: 1fr;
+            }
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 20px;
+            }
+            .modal-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark"></div>
+
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-circular">
+                <span class="logo-text">W</span>
+            </div>
+        </div>
+        <h1 class="main-title" data-translate-key="mainTitle">Waterfalls Airport Transfers</h1>
+        <p class="subtitle" data-translate-key="subtitle">Selecciona tu servicio</p>
+        <div class="language-selector">
+            <i class="fas fa-globe"></i>
+            <select id="languageSelect">
+                <option value="es">Español</option>
+                <option value="en">English</option>
+                <option value="pt">Português</option>
+                <option value="zh">中文</option>
+                <option value="ja">日本語</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="form-cards-container">
+            <!-- Card Transfer IN -->
+            <a href="#" class="form-card" data-form="transfer-in" style="--card-color: #00D1FF; --card-color-rgb: 0, 209, 255;">
+                 <i class="fas fa-share-alt card-share-icon" title="Share" data-translate-key-title="shareLinkButton"></i>
+                <div class="card-icon"><i class="fas fa-plane-arrival"></i></div>
+                <h2 class="card-title" data-translate-key="transferInTitle">Transfer IN</h2>
+                <p class="card-desc" data-translate-key="transferInDesc">Servicio de traslado desde el aeropuerto a tu destino.</p>
+            </a>
+            
+            <!-- Card Transfer OUT -->
+            <a href="#" class="form-card" data-form="transfer-out" style="--card-color: #00FF99; --card-color-rgb: 0, 255, 153;">
+                 <i class="fas fa-share-alt card-share-icon" title="Share" data-translate-key-title="shareLinkButton"></i>
+                <div class="card-icon"><i class="fas fa-plane-departure"></i></div>
+                <h2 class="card-title" data-translate-key="transferOutTitle">Transfer OUT</h2>
+                <p class="card-desc" data-translate-key="transferOutDesc">Traslado desde tu ubicación hasta el aeropuerto para tu vuelo.</p>
+            </a>
+
+            <!-- Card Transfer IN + OUT -->
+            <a href="#" class="form-card" data-form="transfer-in-out" style="--card-color: #B300FF; --card-color-rgb: 179, 0, 255;">
+                 <i class="fas fa-share-alt card-share-icon" title="Share" data-translate-key-title="shareLinkButton"></i>
+                <div class="card-icon"><i class="fas fa-exchange-alt"></i></div>
+                <h2 class="card-title" data-translate-key="transferInOutTitle">Transfer IN + OUT</h2>
+                <p class="card-desc" data-translate-key="transferInOutDesc">Servicio completo de ida y vuelta al aeropuerto.</p>
+            </a>
+
+            <!-- Card Excursions -->
+            <a href="#" class="form-card" data-form="excursions" style="--card-color: #FF6200; --card-color-rgb: 255, 98, 0;">
+                 <i class="fas fa-share-alt card-share-icon" title="Share" data-translate-key-title="shareLinkButton"></i>
+                <div class="card-icon"><i class="fas fa-binoculars"></i></div>
+                <h2 class="card-title" data-translate-key="excursionsTitle">Excursiones</h2>
+                <p class="card-desc" data-translate-key="excursionsDesc">Tours y actividades en la región de la Triple Frontera.</p>
+            </a>
+            
+            <!-- Card Transfer IN + OUT Different -->
+             <a href="#" class="form-card" data-form="transfer-different" style="--card-color: #FF00B3; --card-color-rgb: 255, 0, 179;">
+                 <i class="fas fa-share-alt card-share-icon" title="Share" data-translate-key-title="shareLinkButton"></i>
+                <div class="card-icon"><i class="fas fa-random"></i></div>
+                <h2 class="card-title" data-translate-key="transferDifferentTitle">Transfer IN + OUT Dif.</h2>
+                <p class="card-desc" data-translate-key="transferDifferentDesc">Servicio con diferentes destinos de llegada y salida.</p>
+            </a>
+
+            <!-- Card Transfer Normal -->
+             <a href="#" class="form-card" data-form="transfer-normal" style="--card-color: #00FFEA; --card-color-rgb: 0, 255, 234;">
+                 <i class="fas fa-share-alt card-share-icon" title="Share" data-translate-key-title="shareLinkButton"></i>
+                <div class="card-icon"><i class="fas fa-taxi"></i></div>
+                <h2 class="card-title" data-translate-key="transferNormalTitle">Transfer normal</h2>
+                <p class="card-desc" data-translate-key="transferNormalDesc">Traslados locales dentro de Puerto Iguazú y alrededores.</p>
+            </a>
+
+            <!-- Card Transfer All -->
+             <a href="#" class="form-card" data-form="transfer-all" style="--card-color: #FFFF00; --card-color-rgb: 255, 255, 0;">
+                 <i class="fas fa-share-alt card-share-icon" title="Share" data-translate-key-title="shareLinkButton"></i>
+                <div class="card-icon"><i class="fas fa-star"></i></div>
+                <h2 class="card-title" data-translate-key="transferAllTitle">Transfer IN/OUT + Excursiones</h2>
+                <p class="card-desc" data-translate-key="transferAllDesc">Combina tu servicio de traslado IN/OUT con nuestras excursiones.</p>
+            </a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p data-translate-key="footerText">Traslados Nacionales & Internacionales - Puerto Iguazú, Misiones, Argentina</p>
+    </footer>
+
+    <!-- Form Modal -->
+    <div id="formModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" class="modal-title"></h2>
+                <span class="modal-close">&times;</span>
+            </div>
+            <form id="reservationForm" novalidate>
+                <!-- Common Fields -->
+                <div class="form-group">
+                    <label for="fullName"><span data-translate-key="fullNameLabel"></span> <span class="required">*</span></label>
+                    <input type="text" id="fullName" name="fullName" required>
+                    <div class="error-message" data-translate-key="fieldRequiredError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="whatsapp"><span data-translate-key="whatsappLabel"></span> <span class="required">*</span></label>
+                    <input type="text" id="whatsapp" name="whatsapp" required>
+                    <div class="error-message" data-translate-key="fieldRequiredError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="origin" data-translate-key="originLabel"></label>
+                    <input type="text" id="origin" name="origin">
+                </div>
+                <div class="form-group">
+                    <label for="passengers"><span data-translate-key="passengersLabel"></span> <span class="required">*</span></label>
+                    <input type="number" id="passengers" name="passengers" min="1" required>
+                    <div class="error-message" data-translate-key="fieldRequiredError"></div>
+                </div>
+                <div class="form-group" id="luggage-group">
+                    <label for="luggage" data-translate-key="luggageLabel"></label>
+                    <input type="number" id="luggage" name="luggage" min="0">
+                </div>
+                
+                <!-- Form-specific fields will be injected here -->
+                <div id="formSpecificFields"></div>
+
+                 <!-- Payment fields -->
+                 <div class="form-group">
+                    <label for="price" data-translate-key="priceLabel"></label>
+                    <input type="number" id="price" name="price">
+                </div>
+                <div class="form-group">
+                    <label for="deposit" data-translate-key="depositLabel"></label>
+                    <input type="number" id="deposit" name="deposit">
+                </div>
+                <div class="form-group">
+                    <label for="paymentMethod" data-translate-key="paymentMethodLabel"></label>
+                    <select id="paymentMethod" name="paymentMethod">
+                        <option value="" data-translate-key="selectMethodOption"></option>
+                        <option value="cash" data-translate-key="cashOption"></option>
+                        <option value="transfer" data-translate-key="transferOption"></option>
+                        <option value="creditCard" data-translate-key="creditCardOption"></option>
+                        <option value="debitCard" data-translate-key="debitCardOption"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="currency" data-translate-key="currencyLabel"></label>
+                    <select id="currency" name="currency">
+                        <option value="ARS" data-translate-key="arsOption"></option>
+                        <option value="USD" data-translate-key="usdOption"></option>
+                        <option value="EUR" data-translate-key="eurOption"></option>
+                        <option value="BRL" data-translate-key="brlOption"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notes" data-translate-key="notesLabel"></label>
+                    <textarea id="notes" name="notes" rows="3"></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fab fa-whatsapp"></i>
+                    <span data-translate-key="submitButton"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="confirmationModalTitle" class="modal-title" data-translate-key="confirmationTitle"></h2>
+                 <span class="modal-close">&times;</span>
+            </div>
+            <div id="confirmationModalBody">
+                <i class="fas fa-check-circle"></i>
+                <p id="confirmationMessage"></p>
+                <div id="confirmationTips"></div>
+                <button id="confirmationCloseBtn" class="submit-btn" data-translate-key="closeButton"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="shareModalTitle" class="modal-title"></h2>
+                <span id="shareModalClose" class="modal-close">&times;</span>
+            </div>
+            <div id="shareModalBody">
+                 <p data-translate-key="shareMessage"></p>
+                 <input type="text" id="shareLinkInput" readonly>
+                 <div class="share-actions">
+                     <button id="copyShareLinkBtn" class="share-btn">
+                        <i class="fas fa-copy"></i> <span data-translate-key="copyLinkTitle"></span>
+                     </button>
+                     <button id="nativeShareBtn" class="share-btn">
+                        <i class="fas fa-share-square"></i> <span data-translate-key="nativeShareButton"></span>
+                     </button>
+                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification"></div>
+
+    <script type="module" src="index.tsx"></script>
+</body>
+</html>
