@@ -1345,7 +1345,7 @@ const handleFormSubmit = async (event: SubmitEvent) => {
 
     // Build and send WhatsApp message
     const whatsappMessage = generateWhatsAppMessage(formType, reservationData, calendarLinks);
-    const whatsappUrl = `https://wa.me/5493757678145?text=${encodeURIComponent(whatsappMessage)}`;
+    const whatsappUrl = `https://wa.me/5493757623026?text=${encodeURIComponent(whatsappMessage)}`;
     window.open(whatsappUrl, '_blank');
 
     // Show confirmation
