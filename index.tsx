@@ -153,7 +153,7 @@ const translations: Translations = {
             cataratasArgDuty: "Cataratas Argentinas + Duty Free Shop"
         },
         confirmationTitle: "¡Reserva Enviada!",
-        confirmationMessageDefault: "Tu solicitud de reserva ha sido enviada por WhatsApp. Nos pondremos en contacto contigo a la brevedad para confirmar todos los detalles.",
+        confirmationMessageDefault: "Tu solicitud de reserva ha sido enviada por WhatsApp. Nos pondremos en contacto contigo a la breve dad para confirmar todos los detalles.",
         confirmationTipsDefaultTitle: "Consejos para tu viaje:",
         confirmationTipsDefault: "Asegúrate de tener a mano los detalles de tu vuelo.|Si hay cambios en tu itinerario, avísanos con anticipación.|¡Prepara tu cámara para no perderte nada de Iguazú!",
         confirmationMessageExcursions: "Tu solicitud ha sido enviada. Incluimos enlaces para que agregues los eventos a tu calendario. Nos pondremos en contacto para confirmar.",
@@ -167,6 +167,7 @@ const translations: Translations = {
         shareMessage: "Comparte este servicio con otros:",
         copyLinkTitle: "Copiar enlace",
         nativeShareButton: "Compartir vía...",
+        popupBlockedError: "No se pudo abrir WhatsApp. Por favor, deshabilita tu bloqueador de ventanas emergentes e inténtalo de nuevo."
     },
     en: {
         mainTitle: "Waterfalls Airport Transfers",
@@ -277,6 +278,7 @@ const translations: Translations = {
         shareMessage: "Share this service with others:",
         copyLinkTitle: "Copy link",
         nativeShareButton: "Share via...",
+        popupBlockedError: "Could not open WhatsApp. Please disable your pop-up blocker and try again."
     },
     pt: {
         mainTitle: "Waterfalls Traslados Aeroporto",
@@ -387,6 +389,7 @@ const translations: Translations = {
         shareMessage: "Compartilhe este serviço com outros:",
         copyLinkTitle: "Copiar link",
         nativeShareButton: "Compartilhar via...",
+        popupBlockedError: "Não foi possível abrir o WhatsApp. Por favor, desative seu bloqueador de pop-ups e tente novamente."
     },
     zh: {
         mainTitle: "瀑布机场接送",
@@ -497,6 +500,7 @@ const translations: Translations = {
         shareMessage: "与他人分享此服务：",
         copyLinkTitle: "复制链接",
         nativeShareButton: "通过...分享",
+        popupBlockedError: "无法打开WhatsApp。请禁用您的弹出窗口拦截器，然后重试。"
     },
     ja: {
         mainTitle: "ウォーターフォールズ空港送迎",
@@ -607,6 +611,7 @@ const translations: Translations = {
         shareMessage: "このサービスを他の人と共有する：",
         copyLinkTitle: "リンクをコピー",
         nativeShareButton: "経由で共有...",
+        popupBlockedError: "WhatsAppを開けませんでした。ポップアップブロッカーを無効にして、もう一度お試しください。"
     }
 };
 
@@ -1081,7 +1086,10 @@ const validateForm = (form: HTMLFormElement): boolean => {
         if (!excursionChecked && !customExcursionText && excursionGroup) {
             isValid = false;
             const errorDiv = excursionGroup.querySelector('.error-message') as HTMLElement;
-            if (errorDiv) errorDiv.style.display = 'block';
+            if (errorDiv) {
+                errorDiv.textContent = getTranslation('atLeastOneExcursionError') as string;
+                errorDiv.style.display = 'block';
+            }
         } else if (excursionGroup) {
              const errorDiv = excursionGroup.querySelector('.error-message') as HTMLElement;
              if(errorDiv) errorDiv.style.display = 'none';
@@ -1099,50 +1107,58 @@ const generateWhatsAppMessage = (
     const t = (key: string) => getTranslation(key) as string;
     const findDetail = (id: string) => reservationData.details.find(d => d.id === id);
 
-    let message = `*--- 🛎️ ${t(`modalTitles.${formType}`)} 🛎️ ---*\n\n`;
+    let message = `*--- 🛎️ ${t(`modalTitles.${formType}`)} ---*\n\n`;
 
     // General Info
-    const generalInfo: (ReservationDetail | undefined)[] = [
-        findDetail('fullName'),
-        findDetail('whatsapp'),
-        findDetail('origin'),
-        findDetail('passengers'),
-        findDetail('luggage')
+    const generalInfo: { id: string; icon: string }[] = [
+        { id: 'fullName', icon: '👤' },
+        { id: 'whatsapp', icon: '📱' },
+        { id: 'origin', icon: '🌍' },
+        { id: 'passengers', icon: '👨‍👩‍👧‍👦' },
+        { id: 'luggage', icon: '🧳' }
     ];
 
-    generalInfo.forEach(detail => {
-        if (detail) {
-            const icons: { [key: string]: string } = { fullName: '👤', whatsapp: '📱', origin: '🌍', passengers: '👨‍👩‍👧‍👦', luggage: '🧳' };
-            message += `${icons[detail.id] || '🔹'} *${detail.label}*: ${detail.value}\n`;
-        }
+    message += `*--- ℹ️ Información General ---*\n`;
+    generalInfo.forEach(info => {
+        const detail = findDetail(info.id);
+        if (detail) message += `${info.icon} *${detail.label}:* ${detail.value}\n`;
     });
-    
-    // Transfer Details
-    const transferInDetails = [findDetail('airportOrigin'), findDetail('destination'), findDetail('arrivalDate'), findDetail('flightTime'), findDetail('flightNumber')];
-    const transferOutDetails = [findDetail('hotelOrigin'), findDetail('airportDestination'), findDetail('departureDate'), findDetail('departureTime'), findDetail('flightTimeOut'), findDetail('flightNumberOut')];
-    const normalTransferDetails = [findDetail('hotelOrigin'), findDetail('destination'), findDetail('transferDate'), findDetail('departureTime')];
 
-    const hasIn = transferInDetails.some(d => d);
-    const hasOut = transferOutDetails.some(d => d);
-    const hasNormal = normalTransferDetails.some(d => d);
+    // Transfer Details
+    const transferInDetails = [
+        { id: 'airportOrigin', icon: '🛫' }, { id: 'destination', icon: '🏨' }, { id: 'arrivalDate', icon: '🗓️' }, { id: 'flightTime', icon: '⏰' }, { id: 'flightNumber', icon: '✈️' }
+    ];
+    const transferOutDetails = [
+        { id: 'hotelOrigin', icon: '🏨' }, { id: 'airportDestination', icon: '🛬' }, { id: 'departureDate', icon: '🗓️' }, { id: 'departureTime', icon: '⏰' }, { id: 'flightTimeOut', icon: '✈️' }, { id: 'flightNumberOut', icon: '#️⃣' }
+    ];
+    const normalTransferDetails = [
+        { id: 'hotelOrigin', icon: '🏠' }, { id: 'destination', icon: '📍' }, { id: 'transferDate', icon: '🗓️' }, { id: 'departureTime', icon: '⏰' }
+    ];
+
+    const hasIn = transferInDetails.some(d => findDetail(d.id));
+    const hasOut = transferOutDetails.some(d => findDetail(d.id));
+    const hasNormal = normalTransferDetails.some(d => findDetail(d.id));
 
     if (hasIn || hasOut || hasNormal) {
         message += `\n*--- ✈️ Detalles del Transfer ---*\n`;
         if (hasIn) {
-            if(formType === 'transfer-in-out' || formType === 'transfer-different' || formType === 'transfer-all') message += `*${t('formFieldLabels.transferInHeading')}*\n`;
-            transferInDetails.forEach(d => {
-                if (d) message += `🔹 *${d.label}*: ${d.value}\n`;
+            if (formType === 'transfer-in-out' || formType === 'transfer-different' || formType === 'transfer-all') message += `*➡️ ${t('formFieldLabels.transferInHeading')}*\n`;
+            transferInDetails.forEach(info => {
+                const detail = findDetail(info.id);
+                if (detail) message += `${info.icon} *${detail.label}:* ${detail.value}\n`;
             });
         }
         if (hasOut) {
-             if(formType === 'transfer-in-out' || formType === 'transfer-different' || formType === 'transfer-all') message += `\n*${t('formFieldLabels.transferOutHeading')}*\n`;
-             transferOutDetails.forEach(d => {
-                if (d) message += `🔹 *${d.label}*: ${d.value}\n`;
+            if (formType === 'transfer-in-out' || formType === 'transfer-different' || formType === 'transfer-all') message += `\n*⬅️ ${t('formFieldLabels.transferOutHeading')}*\n`;
+            transferOutDetails.forEach(info => {
+                const detail = findDetail(info.id);
+                if (detail) message += `${info.icon} *${detail.label}:* ${detail.value}\n`;
             });
         }
-        if (hasNormal && !hasIn && !hasOut) { // Prevent double-listing for combined forms
-             normalTransferDetails.forEach(d => {
-                if (d) message += `🔹 *${d.label}*: ${d.value}\n`;
+        if (hasNormal && !hasIn && !hasOut) {
+            normalTransferDetails.forEach(info => {
+                const detail = findDetail(info.id);
+                if (detail) message += `${info.icon} *${detail.label}:* ${detail.value}\n`;
             });
         }
     }
@@ -1151,27 +1167,31 @@ const generateWhatsAppMessage = (
     if (reservationData.excursions.length > 0) {
         message += `\n*--- 🏞️ ${t('excursionsTitle')} ---*\n`;
         reservationData.excursions.forEach(ex => {
-            message += `- ${ex.name} (${ex.date} - ${ex.time})\n`;
+            message += `- *${ex.name}* (🗓️ ${ex.date} | ⏰ ${ex.time})\n`;
         });
     }
     const customExcursion = findDetail('customExcursionDetails');
-    if(customExcursion) {
+    if (customExcursion) {
         if (reservationData.excursions.length === 0) message += `\n*--- 🏞️ ${t('excursionsTitle')} ---*\n`;
-        message += `📝 *${customExcursion.label}*: ${customExcursion.value}\n`;
+        message += `✍️ *${customExcursion.label}:* ${customExcursion.value}\n`;
     }
 
     // Payment
-    const paymentDetails = [findDetail('price'), findDetail('deposit'), findDetail('paymentMethod'), findDetail('currency')];
-    if (paymentDetails.some(d => d)) {
-        message += `\n*--- 💸 Método de pago ---*\n`;
-        paymentDetails.forEach(d => {
-            if(d) message += `🔹 *${d.label}*: ${d.value}\n`;
+    const paymentDetails = [
+        { id: 'price', icon: '💰' }, { id: 'deposit', icon: '💳' }, { id: 'paymentMethod', icon: ' yöntem' }, { id: 'currency', icon: '💲' }
+    ];
+    if (paymentDetails.some(d => findDetail(d.id))) {
+        message += `\n*--- 💸 Detalles de Pago ---*\n`;
+        paymentDetails.forEach(info => {
+            const detail = findDetail(info.id);
+            if (detail) message += `${info.icon} *${detail.label}:* ${detail.value}\n`;
         });
     }
 
+    // Notes
     const notes = findDetail('notes');
     if (notes) {
-        message += `\n📝 *${notes.label}*: ${notes.value}\n`;
+        message += `\n*--- 📝 ${t('notesLabel')} ---*\n${notes.value}\n`;
     }
 
     // Calendar links
@@ -1196,19 +1216,19 @@ const handleFormSubmit = async (event: SubmitEvent) => {
     const t = (key: string, options?: any) => getTranslation(key, options) as string;
     const originalBtnText = btnText ? btnText.textContent : t('submitButton');
 
+    // 1. Set button to loading state, but keep the form modal open.
     submitBtn.disabled = true;
     if (btnText) btnText.textContent = t('sendingButton');
 
+    // 2. Process all data and generate links and messages.
     const reservationData = getReservationDetails(form);
     const formType = form.dataset.formType || '';
 
-    // Helper function to generate detailed descriptions for calendar events
     const generateEventDescription = (
         baseDescription: string,
         specificEventDetails: { label: string; value: string }[]
     ): string => {
         let fullDescription = `${baseDescription}\n\n`;
-        
         let commonDetailsString = '';
         const commonDetailsMap: {id: string, labelKey: string, icon: string}[] = [
             { id: 'fullName', labelKey: 'fullNameLabel', icon: '👤' },
@@ -1220,33 +1240,24 @@ const handleFormSubmit = async (event: SubmitEvent) => {
         
         commonDetailsMap.forEach(detailInfo => {
             const value = reservationData.details.find(d => d.id === detailInfo.id)?.value;
-            if (value) {
-                commonDetailsString += `${detailInfo.icon} ${t(detailInfo.labelKey)}: ${value}\n`;
-            }
+            if (value) commonDetailsString += `${detailInfo.icon} ${t(detailInfo.labelKey)}: ${value}\n`;
         });
         
-        if (commonDetailsString) {
-             fullDescription += `--- Detalles de la Reserva ---\n${commonDetailsString}\n`;
-        }
+        if (commonDetailsString) fullDescription += `--- Detalles de la Reserva ---\n${commonDetailsString}\n`;
 
         let specificDetailsString = '';
         specificEventDetails.forEach(detail => {
              specificDetailsString += `• ${detail.label}: ${detail.value}\n`;
         });
 
-        if (specificDetailsString) {
-            fullDescription += `--- Detalles del Evento ---\n${specificDetailsString}\n`;
-        }
+        if (specificDetailsString) fullDescription += `--- Detalles del Evento ---\n${specificDetailsString}\n`;
         
         const notes = reservationData.details.find(d => d.id === 'notes')?.value;
-        if (notes) {
-            fullDescription += `--- ${t('notesLabel')} ---\n${notes}`;
-        }
+        if (notes) fullDescription += `--- ${t('notesLabel')} ---\n${notes}`;
 
         return fullDescription.trim();
     };
 
-    // Collect all potential calendar events
     const allEvents: CalendarEvent[] = [];
     const findDetailValue = (id: string) => reservationData.details.find(d => d.id === id)?.value || '';
 
@@ -1256,21 +1267,8 @@ const handleFormSubmit = async (event: SubmitEvent) => {
         if (arrivalDate && flightTime) {
             const flightNumber = findDetailValue('flightNumber');
             const destination = findDetailValue('destination');
-
-            const baseDesc = `${t('transferInTitle')}: Vuelo ${flightNumber}`;
-            const specificDetails = [
-                { label: t('formFieldLabels.airportOrigin'), value: findDetailValue('airportOrigin') },
-                { label: t('formFieldLabels.destination'), value: destination },
-                { label: t('formFieldLabels.arrivalDate'), value: arrivalDate },
-                { label: t('formFieldLabels.flightTime'), value: flightTime },
-                { label: t('formFieldLabels.flightNumber'), value: flightNumber },
-            ].filter(d => d.value);
-
-            allEvents.push({
-                title: `${t('transferInTitle')}: Vuelo ${flightNumber || ''}`.trim(),
-                date: arrivalDate, time: flightTime, location: destination,
-                description: generateEventDescription(baseDesc, specificDetails)
-            });
+            const specificDetails = [{ label: t('formFieldLabels.airportOrigin'), value: findDetailValue('airportOrigin') }, { label: t('formFieldLabels.destination'), value: destination }, { label: t('formFieldLabels.arrivalDate'), value: arrivalDate }, { label: t('formFieldLabels.flightTime'), value: flightTime }, { label: t('formFieldLabels.flightNumber'), value: flightNumber }].filter(d => d.value);
+            allEvents.push({ title: `${t('transferInTitle')}: Vuelo ${flightNumber || ''}`.trim(), date: arrivalDate, time: flightTime, location: destination, description: generateEventDescription(`${t('transferInTitle')}: Vuelo ${flightNumber}`, specificDetails) });
         }
     }
     if (['transfer-out', 'transfer-in-out', 'transfer-different', 'transfer-all'].includes(formType)) {
@@ -1279,22 +1277,8 @@ const handleFormSubmit = async (event: SubmitEvent) => {
         if (departureDate && departureTime) {
             const flightNumberOut = findDetailValue('flightNumberOut');
             const hotelOrigin = findDetailValue('hotelOrigin');
-            
-            const baseDesc = `${t('transferOutTitle')}: Recogida para vuelo ${flightNumberOut}`;
-            const specificDetails = [
-                { label: t('formFieldLabels.hotelOrigin'), value: hotelOrigin },
-                { label: t('formFieldLabels.airportDestination'), value: findDetailValue('airportDestination') },
-                { label: t('formFieldLabels.departureDate'), value: departureDate },
-                { label: t('formFieldLabels.departureTime'), value: departureTime },
-                { label: t('formFieldLabels.flightTimeOut'), value: findDetailValue('flightTimeOut') },
-                { label: t('formFieldLabels.flightNumberOut'), value: flightNumberOut },
-            ].filter(d => d.value);
-
-            allEvents.push({
-                title: `${t('transferOutTitle')}: Vuelo ${flightNumberOut || ''}`.trim(),
-                date: departureDate, time: departureTime, location: hotelOrigin,
-                description: generateEventDescription(baseDesc, specificDetails)
-            });
+            const specificDetails = [{ label: t('formFieldLabels.hotelOrigin'), value: hotelOrigin }, { label: t('formFieldLabels.airportDestination'), value: findDetailValue('airportDestination') }, { label: t('formFieldLabels.departureDate'), value: departureDate }, { label: t('formFieldLabels.departureTime'), value: departureTime }, { label: t('formFieldLabels.flightTimeOut'), value: findDetailValue('flightTimeOut') }, { label: t('formFieldLabels.flightNumberOut'), value: flightNumberOut }].filter(d => d.value);
+            allEvents.push({ title: `${t('transferOutTitle')}: Vuelo ${flightNumberOut || ''}`.trim(), date: departureDate, time: departureTime, location: hotelOrigin, description: generateEventDescription(`${t('transferOutTitle')}: Recogida para vuelo ${flightNumberOut}`, specificDetails) });
         }
     }
     if (formType === 'transfer-normal') {
@@ -1303,57 +1287,27 @@ const handleFormSubmit = async (event: SubmitEvent) => {
         if (transferDate && departureTime) {
             const hotelOrigin = findDetailValue('hotelOrigin');
             const destination = findDetailValue('destination');
-
-            const baseDesc = t('transferNormalTitle');
-            const specificDetails = [
-                { label: t('formFieldLabels.hotelOrigin'), value: hotelOrigin },
-                { label: t('formFieldLabels.destination'), value: destination },
-                { label: t('formFieldLabels.transferDate'), value: transferDate },
-                { label: t('formFieldLabels.departureTime'), value: departureTime },
-            ].filter(d => d.value);
-
-            allEvents.push({
-                title: t('transferNormalTitle'), date: transferDate, time: departureTime,
-                location: destination,
-                description: generateEventDescription(baseDesc, specificDetails)
-            });
+            const specificDetails = [{ label: t('formFieldLabels.hotelOrigin'), value: hotelOrigin }, { label: t('formFieldLabels.destination'), value: destination }, { label: t('formFieldLabels.transferDate'), value: transferDate }, { label: t('formFieldLabels.departureTime'), value: departureTime }].filter(d => d.value);
+            allEvents.push({ title: t('transferNormalTitle'), date: transferDate, time: departureTime, location: destination, description: generateEventDescription(t('transferNormalTitle'), specificDetails) });
         }
     }
     reservationData.excursions.forEach(excursion => {
         if (excursion.date && excursion.time) {
-            const baseDesc = `Excursión: ${excursion.name}`;
-            const specificDetails = [
-                { label: t('formFieldLabels.excursionDate'), value: excursion.date },
-                { label: t('formFieldLabels.excursionTime'), value: excursion.time },
-            ];
-            
-            allEvents.push({
-                title: `${t('excursionsTitle')}: ${excursion.name}`, date: excursion.date, time: excursion.time,
-                description: generateEventDescription(baseDesc, specificDetails)
-            });
+            const specificDetails = [{ label: t('formFieldLabels.excursionDate'), value: excursion.date }, { label: t('formFieldLabels.excursionTime'), value: excursion.time }];
+            allEvents.push({ title: `${t('excursionsTitle')}: ${excursion.name}`, date: excursion.date, time: excursion.time, description: generateEventDescription(`Excursión: ${excursion.name}`, specificDetails) });
         }
     });
 
-    // Generate and shorten calendar links
-    const longLinks = allEvents.map(eventData => ({
-        name: eventData.title,
-        link: generateGoogleCalendarLink(eventData)
-    })).filter(cal => cal.link);
-    
+    const longLinks = allEvents.map(eventData => ({ name: eventData.title, link: generateGoogleCalendarLink(eventData) })).filter(cal => cal.link);
     const shorteningPromises = longLinks.map(cal => shortenUrl(cal.link).then(shortLink => ({ name: cal.name, link: shortLink })));
     const calendarLinks = await Promise.all(shorteningPromises);
 
-    // Build and send WhatsApp message
     const whatsappMessage = generateWhatsAppMessage(formType, reservationData, calendarLinks);
     const whatsappUrl = `https://wa.me/5493757623026?text=${encodeURIComponent(whatsappMessage)}`;
-    window.open(whatsappUrl, '_blank');
 
-    // Show confirmation
-    setTimeout(() => {
-        submitBtn.disabled = false;
-        if (btnText) btnText.textContent = originalBtnText;
+    // 3. Define the success function which closes the form and shows the confirmation.
+    const showConfirmationAndCleanup = () => {
         closeModal('formModal');
-        showNotification('notificationSent');
 
         const confirmationModal = document.getElementById('confirmationModal') as HTMLElement;
         const confirmationMessage = document.getElementById('confirmationMessage') as HTMLElement;
@@ -1363,9 +1317,7 @@ const handleFormSubmit = async (event: SubmitEvent) => {
         let tipsKey = 'confirmationTipsDefault';
         let tipsTitleKey = 'confirmationTipsDefaultTitle';
 
-        if (calendarLinks.length > 0) {
-            messageKey = 'confirmationMessageExcursions';
-        }
+        if (calendarLinks.length > 0) messageKey = 'confirmationMessageExcursions';
         if (formType === 'excursions' || formType === 'transfer-all') {
             tipsKey = 'confirmationTipsExcursions';
             tipsTitleKey = 'confirmationTipsExcursionsTitle';
@@ -1373,24 +1325,46 @@ const handleFormSubmit = async (event: SubmitEvent) => {
 
         confirmationMessage.textContent = t(messageKey);
         const tips = (t(tipsKey)).split('|');
-        let tipsHtml = `
-            <h3>${t(tipsTitleKey)}</h3>
-            <ul>${tips.map(tip => `<li><i class="fas fa-check-circle"></i> ${escapeHtml(tip)}</li>`).join('')}</ul>`;
+        let tipsHtml = `<h3>${t(tipsTitleKey)}</h3><ul>${tips.map(tip => `<li><i class="fas fa-check-circle"></i> ${escapeHtml(tip)}</li>`).join('')}</ul>`;
         
         if (calendarLinks.length > 0) {
-            const calendarLinksHtml = `<h3>${t('addToCalendarLabel')}</h3>` + calendarLinks.map(cal => `
-                <a href="${cal.link}" target="_blank" rel="noopener noreferrer" class="submit-btn calendar-link">
-                    <i class="fas fa-calendar-plus"></i> ${escapeHtml(cal.name)}
-                </a>
-            `).join('');
+            const calendarLinksHtml = `<h3>${t('addToCalendarLabel')}</h3>` + calendarLinks.map(cal => `<a href="${cal.link}" target="_blank" rel="noopener noreferrer" class="submit-btn calendar-link"><i class="fas fa-calendar-plus"></i> ${escapeHtml(cal.name)}</a>`).join('');
             tipsHtml = calendarLinksHtml + tipsHtml;
         }
 
         tipsContainer.innerHTML = tipsHtml;
         confirmationModal.style.display = 'block';
+    };
 
-    }, 1500);
+    // 4. Set up focus listener and fallback timeout.
+    let fallbackTimeout: number;
+
+    const onFocus = () => {
+        window.removeEventListener('focus', onFocus);
+        clearTimeout(fallbackTimeout);
+        showConfirmationAndCleanup();
+    };
+
+    const resetForm = () => {
+        window.removeEventListener('focus', onFocus);
+        submitBtn.disabled = false;
+        if (btnText) btnText.textContent = originalBtnText;
+    };
+    
+    fallbackTimeout = window.setTimeout(resetForm, 60000); // 1 minute timeout
+    window.addEventListener('focus', onFocus);
+
+    // 5. Try opening WhatsApp.
+    const whatsAppTab = window.open(whatsappUrl, '_blank');
+
+    if (!whatsAppTab) {
+        alert(t('popupBlockedError'));
+        clearTimeout(fallbackTimeout);
+        window.removeEventListener('focus', onFocus);
+        resetForm();
+    }
 };
+
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
