@@ -16,14 +16,14 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            background: #000000; /* Changed from violet gradient to black */
             color: #ffffff;
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
         }
         
-        /* Sello de agua visible */
+        /* Sello de agua más prominente con efecto neón */
         .watermark {
             position: fixed;
             top: 50%;
@@ -31,9 +31,10 @@
             transform: translate(-50%, -50%);
             width: 500px;
             height: 500px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><circle cx="100" cy="100" r="90" fill="none" stroke="%2300D1FF" stroke-width="3" opacity="0.3"/><text x="100" y="110" text-anchor="middle" fill="%2300D1FF" font-size="24" font-weight="bold" opacity="0.5">WATERFALLS</text></svg>') no-repeat center;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><circle cx="100" cy="100" r="90" fill="none" stroke="%23FFFFFF" stroke-width="1.5"/><text x="100" y="110" text-anchor="middle" fill="%23FFFFFF" font-size="24" font-weight="bold">WATERFALLS</text></svg>') no-repeat center;
             background-size: contain;
-            opacity: 0.2;
+            opacity: 0.2; /* Opacidad aumentada para mayor visibilidad */
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5)); /* Efecto de brillo neón */
             z-index: 0;
             pointer-events: none;
         }
@@ -46,7 +47,6 @@
             z-index: 1;
         }
         
-        /* Logotipo circular visible */
         .logo-container {
             margin-bottom: 30px;
         }
@@ -60,7 +60,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 20px rgba(0, 209, 255, 0.5);
+            /* Efecto neón intensificado */
+            box-shadow: 0 0 15px #00d1ff, 0 0 30px #00d1ff, 0 0 45px #00d1ff;
         }
         
         .logo-text {
@@ -72,13 +73,15 @@
         .main-title {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            /* Efecto neón intensificado */
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #00d1ff, 0 0 30px #00d1ff;
         }
 
         .subtitle {
             font-size: 1.2rem;
             color: #ccc;
             margin-bottom: 20px;
+            text-shadow: 0 0 5px rgba(204, 204, 204, 0.5); /* Brillo sutil */
         }
 
         .language-selector {
@@ -93,6 +96,7 @@
         .language-selector i {
             margin-right: 10px;
             color: #00D1FF;
+            text-shadow: 0 0 8px #00D1FF; /* Efecto neón */
         }
 
         .language-selector select {
@@ -125,7 +129,7 @@
         }
 
         .form-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(20, 20, 20, 0.5); /* Fondo más oscuro para mayor contraste */
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             padding: 25px;
@@ -155,8 +159,8 @@
         
         .form-card:hover {
             transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: rgba(var(--card-color-rgb), 0.1); /* Fondo con color neón */
+            box-shadow: 0 0 25px rgba(var(--card-color-rgb), 0.7); /* Sombra neón */
         }
 
         @keyframes rotate {
@@ -167,7 +171,8 @@
             font-size: 2.5rem;
             margin-bottom: 15px;
             color: var(--card-color, #00D1FF);
-            text-shadow: 0 0 10px var(--card-color, #00D1FF);
+            /* Efecto neón intensificado */
+            text-shadow: 0 0 5px var(--card-color), 0 0 10px var(--card-color), 0 0 20px var(--card-color);
         }
 
         .card-title {
@@ -187,12 +192,13 @@
             right: 15px;
             font-size: 1.2rem;
             color: rgba(255,255,255,0.5);
-            transition: color 0.3s, transform 0.3s;
+            transition: color 0.3s, transform 0.3s, text-shadow 0.3s; /* Añadido text-shadow a la transición */
             z-index: 2;
         }
         .card-share-icon:hover {
             color: var(--card-color, #00D1FF);
             transform: scale(1.2);
+            text-shadow: 0 0 10px var(--card-color, #00D1FF); /* Efecto neón al pasar el cursor */
         }
 
 
@@ -373,13 +379,54 @@
         
         .excursion-details {
             display: none;
-            margin-top: 10px;
-            gap: 10px;
+            margin-top: 15px;
+            gap: 15px;
             flex-wrap: wrap;
+            align-items: flex-end;
         }
-        .excursion-details input {
+        .detail-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
             flex: 1;
-            min-width: 150px;
+            min-width: 130px;
+        }
+        .detail-group label {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin: 0;
+        }
+        .detail-group input {
+             width: 100%;
+             padding: 12px;
+             background-color: rgba(0, 0, 0, 0.3);
+             border: 1px solid #555;
+             border-radius: 8px;
+             color: white;
+             font-size: 1rem;
+        }
+         .detail-group input:focus {
+            outline: none;
+            border-color: var(--modal-color);
+            box-shadow: 0 0 10px rgba(var(--modal-color-rgb), 0.5);
+        }
+
+        .coordinate-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px;
+            min-width: 200px;
+            flex: 2;
+        }
+        .coordinate-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+        .coordinate-option label {
+            margin: 0;
+            font-weight: normal;
+            color: #ccc;
         }
         
         .excursion-custom-textarea {
@@ -402,6 +449,28 @@
             color: var(--modal-color);
             margin-bottom: 20px;
         }
+
+        .confirmation-warning {
+            background-color: rgba(255, 235, 59, 0.1);
+            border: 1px solid #ffeb3b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #eee;
+        }
+        .confirmation-warning strong {
+            color: #ffeb3b;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        .confirmation-warning i {
+            margin-right: 8px;
+        }
+
         #confirmationMessage {
             font-size: 1.1rem;
             line-height: 1.6;
@@ -734,6 +803,7 @@
             </div>
             <div id="confirmationModalBody">
                 <i class="fas fa-check-circle"></i>
+                <div id="confirmationWarning" class="confirmation-warning"></div>
                 <p id="confirmationMessage"></p>
                 <div id="confirmationTips"></div>
                 <button id="confirmationCloseBtn" class="submit-btn" data-translate-key="closeButton"></button>

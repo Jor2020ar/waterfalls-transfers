@@ -1,3 +1,5 @@
+
+
 // --- TYPE DEFINITIONS ---
 type FormField = {
     id: string;
@@ -40,6 +42,8 @@ type ParsedExcursion = {
     date: string;
     time: string;
     name: string;
+    returnTime: string;
+    coordinateReturn: boolean;
 };
 
 type ReservationData = {
@@ -129,7 +133,9 @@ const translations: Translations = {
             transferInHeading: "Datos del Transfer IN",
             transferOutHeading: "Datos del Transfer OUT",
             excursionDate: "Fecha",
-            excursionTime: "Hora"
+            excursionTime: "Hora",
+            excursionReturnTime: "Hora de regreso",
+            coordinateWithDriver: "Coordinar con el conductor"
         },
         excursionOptions: {
             cataratasArgentinas: "Cataratas Argentinas",
@@ -153,12 +159,14 @@ const translations: Translations = {
             cataratasArgDuty: "Cataratas Argentinas + Duty Free Shop"
         },
         confirmationTitle: "¡Reserva Enviada!",
-        confirmationMessageDefault: "Tu solicitud de reserva ha sido enviada por WhatsApp. Nos pondremos en contacto contigo a la breve dad para confirmar todos los detalles.",
+        confirmationMessageDefault: "Tu solicitud de reserva ha sido enviada por WhatsApp. Nos pondremos en contacto contigo a la brevedad para confirmar todos los detalles.",
         confirmationTipsDefaultTitle: "Consejos para tu viaje:",
         confirmationTipsDefault: "Asegúrate de tener a mano los detalles de tu vuelo.|Si hay cambios en tu itinerario, avísanos con anticipación.|¡Prepara tu cámara para no perderte nada de Iguazú!",
         confirmationMessageExcursions: "Tu solicitud ha sido enviada. Incluimos enlaces para que agregues los eventos a tu calendario. Nos pondremos en contacto para confirmar.",
         confirmationTipsExcursionsTitle: "Consejos para tus excursiones:",
         confirmationTipsExcursions: "Lleva ropa cómoda, protector solar y repelente de insectos.|No olvides tu documento de identidad o pasaporte.|¡Disfruta de la aventura y la majestuosidad de la naturaleza!",
+        confirmationWarningTitle: "Atención",
+        confirmationWarningMessage: "Su reserva ha sido procesada. Es crucial que verifique en el chat de WhatsApp que el formulario se haya enviado correctamente; debería encontrarlo en la conversación. Tenga en cuenta que el cartel de confirmación se genera automáticamente, antes de que el formulario sea enviado correctamente por WhatsApp. Si no encuentra los datos en el chat, por favor, reenvíelos para evitar inconvenientes. Nos esforzamos por garantizar su tranquilidad, pero necesitamos su colaboración para confirmar la correcta recepción.",
         closeButton: "Cerrar",
         addToCalendarLabel: "Agregar eventos al calendario",
         linkCopiedNotification: "¡Enlace copiado al portapapeles!",
@@ -240,7 +248,9 @@ const translations: Translations = {
             transferInHeading: "Transfer IN Details",
             transferOutHeading: "Transfer OUT Details",
             excursionDate: "Date",
-            excursionTime: "Time"
+            excursionTime: "Time",
+            excursionReturnTime: "Return time",
+            coordinateWithDriver: "Coordinate with driver"
         },
         excursionOptions: {
             cataratasArgentinas: "Argentinian Falls",
@@ -270,6 +280,8 @@ const translations: Translations = {
         confirmationMessageExcursions: "Your request has been sent. We've included links to add the events to your calendar. We will contact you to confirm.",
         confirmationTipsExcursionsTitle: "Tips for your excursions:",
         confirmationTipsExcursions: "Wear comfortable clothing, sunscreen, and insect repellent.|Don't forget your ID or passport.|Enjoy the adventure and the majesty of nature!",
+        confirmationWarningTitle: "Attention",
+        confirmationWarningMessage: "Your reservation has been processed. It is crucial to verify in the WhatsApp chat that the form has been sent correctly; you should find it in the conversation. Please note that the confirmation notice is generated automatically before the form is successfully sent via WhatsApp. If you don't find the details in the chat, please resend them to avoid any issues. We strive to ensure your peace of mind, but we need your collaboration to confirm correct reception.",
         closeButton: "Close",
         addToCalendarLabel: "Add events to calendar",
         linkCopiedNotification: "Link copied to clipboard!",
@@ -351,7 +363,9 @@ const translations: Translations = {
             transferInHeading: "Dados do Transfer IN",
             transferOutHeading: "Dados do Transfer OUT",
             excursionDate: "Data",
-            excursionTime: "Hora"
+            excursionTime: "Hora",
+            excursionReturnTime: "Hora de retorno",
+            coordinateWithDriver: "Coordenar com o motorista"
         },
         excursionOptions: {
             cataratasArgentinas: "Cataratas Argentinas",
@@ -381,6 +395,8 @@ const translations: Translations = {
         confirmationMessageExcursions: "Sua solicitação foi enviada. Incluímos links para você adicionar os eventos ao seu calendário. Entraremos em contato para confirmar.",
         confirmationTipsExcursionsTitle: "Dicas para suas excursões:",
         confirmationTipsExcursions: "Use roupas confortáveis, protetor solar e repelente de insetos.|Não se esqueça do seu documento de identidade ou passaporte.|Aproveite a aventura e a majestade da natureza!",
+        confirmationWarningTitle: "Atenção",
+        confirmationWarningMessage: "Sua reserva foi processada. É crucial que você verifique no chat do WhatsApp se o formulário foi enviado corretamente; ele deve estar na conversa. Lembre-se que o aviso de confirmação é gerado automaticamente, antes que o formulário seja enviado com sucesso pelo WhatsApp. Se não encontrar os dados no chat, por favor, reenvie para evitar inconvenientes. Esforçamo-nos para garantir sua tranquilidade, mas precisamos da sua colaboração para confirmar o recebimento correto.",
         closeButton: "Fechar",
         addToCalendarLabel: "Adicionar eventos ao calendário",
         linkCopiedNotification: "Link copiado para a área de transferência!",
@@ -462,7 +478,9 @@ const translations: Translations = {
             transferInHeading: "接机详情",
             transferOutHeading: "送机详情",
             excursionDate: "日期",
-            excursionTime: "时间"
+            excursionTime: "时间",
+            excursionReturnTime: "返回时间",
+            coordinateWithDriver: "与司机协调"
         },
         excursionOptions: {
             cataratasArgentinas: "阿根廷瀑布",
@@ -492,6 +510,8 @@ const translations: Translations = {
         confirmationMessageExcursions: "您的请求已发送。我们已包含将活动添加到日历的链接。我们将联系您进行确认。",
         confirmationTipsExcursionsTitle: "游览提示：",
         confirmationTipsExcursions: "穿着舒适的衣物、防晒霜和驱虫剂。|不要忘记您的身份证或护照。|享受冒险和壮丽的自然风光！",
+        confirmationWarningTitle: "注意",
+        confirmationWarningMessage: "您的预订已处理。请务必在WhatsApp聊天中核实表格是否已正确发送；您应该能在对话中找到它。请注意，确认通知是在表格通过WhatsApp成功发送之前自动生成的。如果您在聊天中找不到详细信息，请重新发送以避免任何问题。我们努力确保您安心，但我们需要您的协作来确认正确接收。",
         closeButton: "关闭",
         addToCalendarLabel: "将活动添加到日历",
         linkCopiedNotification: "链接已复制到剪贴板！",
@@ -573,7 +593,9 @@ const translations: Translations = {
             transferInHeading: "お迎え詳細",
             transferOutHeading: "お送り詳細",
             excursionDate: "日付",
-            excursionTime: "時間"
+            excursionTime: "時間",
+            excursionReturnTime: "戻り時間",
+            coordinateWithDriver: "ドライバーと調整"
         },
         excursionOptions: {
             cataratasArgentinas: "アルゼンチン側の滝",
@@ -603,6 +625,8 @@ const translations: Translations = {
         confirmationMessageExcursions: "リクエストが送信されました。イベントをカレンダーに追加するためのリンクが含まれています。確認のためご連絡いたします。",
         confirmationTipsExcursionsTitle: "エクスカーションのヒント：",
         confirmationTipsExcursions: "快適な服装、日焼け止め、虫除けをご着用ください。|IDまたはパスポートをお忘れなく。|冒険と雄大な自然をお楽しみください！",
+        confirmationWarningTitle: "ご注意",
+        confirmationWarningMessage: "ご予約は処理されました。WhatsAppのチャットでフォームが正しく送信されたことを確認することが重要です。会話内にフォームが見つかるはずです。この確認通知は、フォームがWhatsApp経由で正常に送信される前に自動的に生成されることにご注意ください。チャットで詳細が見つからない場合は、問題を防ぐために再送信してください。お客様に安心してご利用いただくために最善を尽くしておりますが、正しい受信を確認するためにご協力をお願いいたします。",
         closeButton: "閉じる",
         addToCalendarLabel: "イベントをカレンダーに追加",
         linkCopiedNotification: "リンクがクリップボードにコピーされました！",
@@ -668,7 +692,9 @@ const formConfigs: { [key: string]: FormConfig } = {
         colorDark: "#CC4E00",
         colorRgb: "255, 98, 0",
         hasCustomExcursion: true,
-        fields: [],
+        fields: [
+             { id: 'hotelOrigin', name: 'hotelOrigin', type: 'text', labelKey: 'formFieldLabels.hotelOrigin', required: true }
+        ],
         excursions: [
             { id: "cataratasArgentinas", key: "excursionOptions.cataratasArgentinas" },
             { id: "cataratasBrasilenas", key: "excursionOptions.cataratasBrasilenas" },
@@ -886,8 +912,22 @@ const createExcursionFields = (excursions: ExcursionField[], hasCustom: boolean)
                     <label for="${ex.id}">${label}</label>
                 </div>
                 <div class="excursion-details">
-                    <input type="date" name="${ex.id}-date" aria-label="${t('formFieldLabels.excursionDate')} for ${label}">
-                    <input type="time" name="${ex.id}-time" aria-label="${t('formFieldLabels.excursionTime')} for ${label}">
+                    <div class="detail-group">
+                        <label for="${ex.id}-date">${t('formFieldLabels.excursionDate')}</label>
+                        <input type="date" id="${ex.id}-date" name="${ex.id}-date" aria-label="${t('formFieldLabels.excursionDate')} for ${label}">
+                    </div>
+                    <div class="detail-group">
+                        <label for="${ex.id}-time">${t('formFieldLabels.excursionTime')}</label>
+                        <input type="time" id="${ex.id}-time" name="${ex.id}-time" aria-label="${t('formFieldLabels.excursionTime')} for ${label}">
+                    </div>
+                    <div class="detail-group return-group">
+                        <label for="${ex.id}-return-time">${t('formFieldLabels.excursionReturnTime')}</label>
+                        <input type="time" id="${ex.id}-return-time" name="${ex.id}-return-time" aria-label="${t('formFieldLabels.excursionReturnTime')} for ${label}">
+                    </div>
+                    <div class="coordinate-option">
+                        <input type="checkbox" id="${ex.id}-coordinate" name="${ex.id}-coordinate" class="coordinate-checkbox">
+                        <label for="${ex.id}-coordinate">${t('formFieldLabels.coordinateWithDriver')}</label>
+                    </div>
                 </div>
             </div>
         `;
@@ -915,12 +955,30 @@ const setupExcursionEventListeners = () => {
     document.querySelectorAll('.excursion-selector input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', (event) => {
             const target = event.target as HTMLInputElement;
-            const detailsDiv = target.closest('.excursion-item')?.querySelector('.excursion-details') as HTMLElement;
+            const excursionItem = target.closest('.excursion-item');
+            const detailsDiv = excursionItem?.querySelector('.excursion-details') as HTMLElement;
             if (detailsDiv) {
                 detailsDiv.style.display = target.checked ? 'flex' : 'none';
-                detailsDiv.querySelectorAll('input').forEach(input => {
-                    (input as HTMLInputElement).required = target.checked;
+                detailsDiv.querySelectorAll('input[type="date"], input[type="time"]').forEach(input => {
+                    // Don't make return time required if coordinate is an option
+                    if (!(input as HTMLInputElement).name.includes('-return-time')) {
+                       (input as HTMLInputElement).required = target.checked;
+                    }
                 });
+            }
+        });
+    });
+
+    document.querySelectorAll('.coordinate-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', event => {
+            const target = event.target as HTMLInputElement;
+            const excursionItem = target.closest('.excursion-item');
+            const returnTimeInput = excursionItem?.querySelector('input[name*="-return-time"]') as HTMLInputElement;
+            if(returnTimeInput) {
+                returnTimeInput.disabled = target.checked;
+                if(target.checked) {
+                    returnTimeInput.value = '';
+                }
             }
         });
     });
@@ -966,6 +1024,19 @@ const openFormModal = (formType: string) => {
 const closeModal = (modalId: string) => {
     const modal = document.getElementById(modalId) as HTMLElement;
     if (modal) modal.style.display = 'none';
+
+    // When the confirmation modal is closed, reset all forms on the page.
+    if (modalId === 'confirmationModal') {
+        document.querySelectorAll('form').forEach(form => {
+            form.reset(); // Reset form fields to their default values.
+            
+            // Re-enable all form elements that might have been disabled.
+            form.querySelectorAll('input, button, select, textarea').forEach(element => {
+                const el = element as (HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement);
+                el.disabled = false;
+            });
+        });
+    }
 };
 
 const generateGoogleCalendarLink = (details: CalendarEvent): string => {
@@ -1043,13 +1114,17 @@ const getReservationDetails = (form: HTMLFormElement): ReservationData => {
         const excursionName = (checkbox as HTMLInputElement).value;
         const dateInput = form.querySelector(`input[name="${excursionId}-date"]`) as HTMLInputElement;
         const timeInput = form.querySelector(`input[name="${excursionId}-time"]`) as HTMLInputElement;
+        const returnTimeInput = form.querySelector(`input[name="${excursionId}-return-time"]`) as HTMLInputElement;
+        const coordinateCheckbox = form.querySelector(`input[name="${excursionId}-coordinate"]`) as HTMLInputElement;
         
         if (dateInput && timeInput) {
             parsedExcursions.push({
                 id: excursionId,
                 name: excursionName,
                 date: dateInput.value,
-                time: timeInput.value
+                time: timeInput.value,
+                returnTime: returnTimeInput?.value || '',
+                coordinateReturn: coordinateCheckbox?.checked || false
             });
         }
     });
@@ -1166,8 +1241,15 @@ const generateWhatsAppMessage = (
     // Excursions
     if (reservationData.excursions.length > 0) {
         message += `\n*--- 🏞️ ${t('excursionsTitle')} ---*\n`;
+        const hotelOrigin = findDetail('hotelOrigin');
+        if (hotelOrigin) {
+             message += `🏨 *${hotelOrigin.label}:* ${hotelOrigin.value}\n\n`;
+        }
         reservationData.excursions.forEach(ex => {
-            message += `- *${ex.name}* (🗓️ ${ex.date} | ⏰ ${ex.time})\n`;
+            const returnInfo = ex.coordinateReturn 
+                ? t('formFieldLabels.coordinateWithDriver') 
+                : (ex.returnTime || 'N/A');
+            message += `- *${ex.name}* (🗓️ ${ex.date} | ⏰ ${ex.time} | ↩️ ${returnInfo})\n`;
         });
     }
     const customExcursion = findDetail('customExcursionDetails');
@@ -1310,8 +1392,14 @@ const handleFormSubmit = async (event: SubmitEvent) => {
         closeModal('formModal');
 
         const confirmationModal = document.getElementById('confirmationModal') as HTMLElement;
+        const confirmationWarning = document.getElementById('confirmationWarning') as HTMLElement;
         const confirmationMessage = document.getElementById('confirmationMessage') as HTMLElement;
         const tipsContainer = document.getElementById('confirmationTips') as HTMLElement;
+        
+        const warningTitle = t('confirmationWarningTitle');
+        const warningMessageText = t('confirmationWarningMessage');
+        confirmationWarning.innerHTML = `<strong><i class="fas fa-exclamation-triangle"></i> ${escapeHtml(warningTitle)}</strong><p>${escapeHtml(warningMessageText)}</p>`;
+
 
         let messageKey = 'confirmationMessageDefault';
         let tipsKey = 'confirmationTipsDefault';
